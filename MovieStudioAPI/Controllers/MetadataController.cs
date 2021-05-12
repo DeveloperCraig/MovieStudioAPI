@@ -30,7 +30,7 @@ namespace MovieStudioAPI.Controllers
 
         // POST <MetadataController>
         [HttpPost]
-        public void Post([FromBody] Metadata value)
+        public void Post([FromBody] MovieData value)
         {
             try
             {
