@@ -14,18 +14,33 @@ namespace MovieStudioAPI.Controllers
     [ApiController]
     public class MetadataController : ControllerBase
     {
-        // GET: <MetadataController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET <MetadataController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Metadata[] Get(int id)
         {
-            return "value";
+            try
+            {
+                var t = new MovieQuery();
+                Metadata[] metadatas = t.FilterList(id);
+
+                if (metadatas.Length <= 0)
+                {
+                    throw new System.Web.Http.HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                }
+                else
+                {
+                    metadatas.OrderBy(o => o.Language);
+                    return metadatas;
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
         }
 
         // POST <MetadataController>
