@@ -17,7 +17,7 @@ Time estimation: 5-10mins
 
      - GET /movies/stats 
 
-> <Font color ="red"> Currently this Get Request doesn't work and still needs to be worked on, however it should combine 2 CSV together and return an array of items. </Font>
+> <Font color="red"> Currently this Get Request doesn't work and still needs to be worked on, however it should combine 2 CSV together and return an array of items. </Font>
 > Time estimation: 15mins WIP
 
 
