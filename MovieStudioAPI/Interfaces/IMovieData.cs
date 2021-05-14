@@ -1,12 +1,11 @@
-﻿using MovieStudioAPI.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MovieStudioAPI.Classes
+namespace MovieStudioAPI.Interfaces
 {
-    public class MovieData : IMovieData
+    interface IMovieData
     {
         public int MovieId { get; set; }
         public string Title { get; set; }
