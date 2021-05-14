@@ -55,42 +55,44 @@ namespace MovieStudioAPI.Classes
         /// This is meant combine 2 CSV documents "metadata & stats" and return filtered information.
         /// </summary>
         /// <returns>An array of information</returns>
-        public Stats[] MovieStats()
-        {
-            //WARNING: This code currently doesn't work and still needs working on, What needs to happen is it combines the
-            // 2 document does some filtering and return ordered by most watched then release year
+        //public List<CombinedData> MovieStats()
+        //{
+        //    //WARNING: This code currently doesn't work and still needs working on, What needs to happen is it combines the
+        //    // 2 document does some filtering and return ordered by most watched then release year
+        //    List<CombinedData> combined;
+        //    List<CombinedData> metadata;
+        //    List<CombinedData> statsdata;
 
-            Metadata[] metadata;
-            Stats[] statsdata;
+        //    Stats[] test = new Stats[] { };
 
+        //    var meta = new StreamReader(Environment.CurrentDirectory + "/Docs/metadata.csv");
+        //    using (var metacsv = new CsvHelper.CsvReader(meta, CultureInfo.InvariantCulture))
+        //    {
 
-            var meta = new StreamReader(Environment.CurrentDirectory + "/Docs/metadata.csv");
-            using (var metacsv = new CsvHelper.CsvReader(meta, CultureInfo.InvariantCulture))
-            {
-                metadata = metacsv.GetRecords<Metadata>()
-                    .OrderBy(i => i.MovieId)
-                    .Select(i => i).ToArray();
-            }
-            
+        //        metadata = metacsv.GetRecords<CombinedData>()
+        //            .OrderBy(i => i.MovieId)
+        //            .Select(i => i).ToList();
+        //    }
+           
 
-            var stats = new StreamReader(Environment.CurrentDirectory + "/Docs/stats.csv");
-            using (var statscsv = new CsvHelper.CsvReader(stats, CultureInfo.InvariantCulture))
-            {
-                statsdata = statscsv.GetRecords<Stats>().ToArray();
-
-
-                //var results = metadata.Concat(statsdata).GroupBy(g => g.MovieId).Select(s => s).ToArray();
-
-
-                return statsdata;
-            }
+        //    var stats = new StreamReader(Environment.CurrentDirectory + "/Docs/stats.csv");
+        //    using (var statscsv = new CsvHelper.CsvReader(stats, CultureInfo.InvariantCulture))
+        //    {
+        //        statsdata = statscsv.GetRecords<CombinedData>().ToList();
 
 
+        //        //var results = metadata.Concat(statsdata).GroupBy(g => g.MovieId).Select(s => s).ToArray();
+        //    }
+
+        //    return test;
 
 
 
-        }
+        //}
     }
+
+
+
 
     /// <summary>
     /// In this class what I am doing is checking if the language is the same and if there is multiple of the same Lagrange 

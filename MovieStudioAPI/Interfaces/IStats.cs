@@ -1,15 +1,13 @@
-﻿using MovieStudioAPI.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MovieStudioAPI.Classes
+namespace MovieStudioAPI.Interfaces
 {
-    public class Stats : IStats
+   public interface IStats
     {
         public int movieId { get; set; }
         public int watchDurationMs { get; set; }
-
     }
 }
