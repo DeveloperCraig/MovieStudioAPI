@@ -19,9 +19,10 @@ Time estimation: 5-10mins
      - GET /movies/stats 
 
 ```diff
-> -Currently this Get Request doesn't work and still needs to be worked on, however it should combine 2 CSV together and return an array of items.
-> Time estimation: 15mins WIP
+- Currently this Get Request doesn't work and still needs to be worked on, however it should combine 2 CSV together and return an array of items.
 ```
+> Time estimation: 15mins WIP
+
 
 ## How do I run this project?
 To run this project all you need to do is download the code, open up Visual Studios (I Used 2019) and then press the play button.
