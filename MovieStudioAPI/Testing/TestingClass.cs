@@ -35,13 +35,24 @@ namespace MovieStudioAPI.Testing
             //          select new CombinedData() { MovieId = t1.MovieId, watchDurationMs = t2.watchDurationMs, Duration = t1.Duration, Language = t1.Language, ReleaseYear = t1.ReleaseYear, Title = t1.Title };
 
 
+            //var test = ts2
+            //    .GroupBy(x => x.movieId)
+            //    .Select(x => x.Key).Count();
+
+            var tnow = ts2.GroupBy(x => x.movieId).ToArray();
+
+            var tnow2 = tnow.Where(x => x.Key == 3).SelectMany(x => x).Count();
+
+
             var aver =
                 (from t in ts2
                  group t by t.movieId into moviegroup
-                 select new Stats
+                 select new CombinedData
                  {
                      movieId = moviegroup.Key,
-                     watchDurationMs = (int)moviegroup.Average(x => x.watchDurationMs)
+                     watches = (int)tnow.Where(x => x.Key == moviegroup.Key).SelectMany(x => x).Count(),
+                     //watches = (int)moviegroup.Count(),
+                     averageWatchDurationS = (int)moviegroup.Average(x => x.watchDurationMs)
                  }).ToArray();
 
 
@@ -52,10 +63,11 @@ namespace MovieStudioAPI.Testing
                 y => y.movieId,
                 (x, y) => new CombinedData()
                 {
-                    MovieId = x.MovieId,
-                    watchDurationMs = y.watchDurationMs,
+                    movieId = x.MovieId,
+                    averageWatchDurationS = y.averageWatchDurationS,
+                    watches = y.watches,
                     ReleaseYear = x.ReleaseYear,
-                    Title = x.Title
+                    title = x.Title
                 });
 
 

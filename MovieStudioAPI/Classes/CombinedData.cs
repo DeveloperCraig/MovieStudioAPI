@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MovieStudioAPI.Classes
 {
-    public class CombinedData : IMetadata
+    public class CombinedData
     {
-        public int MovieId { get ; set ; }
-        public string Title { get ; set ; }
-        public string Language { get ; set ; }
-        public string Duration { get ; set ; }
+        public int movieId { get ; set ; }
+        public string title { get ; set ; }
+        public int averageWatchDurationS { get ; set ; }
+        public int watches { get; set; }
         public int ReleaseYear { get ; set ; }
-        public int watchDurationMs { get ; set ; }
+
     }
 }
