@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -55,40 +56,62 @@ namespace MovieStudioAPI.Classes
         /// This is meant combine 2 CSV documents "metadata & stats" and return filtered information.
         /// </summary>
         /// <returns>An array of information</returns>
-        //public List<CombinedData> MovieStats()
-        //{
-        //    //WARNING: This code currently doesn't work and still needs working on, What needs to happen is it combines the
-        //    // 2 document does some filtering and return ordered by most watched then release year
-        //    List<CombinedData> combined;
-        //    List<CombinedData> metadata;
-        //    List<CombinedData> statsdata;
+        public CombinedData[] MovieStats()
+        {
+            List<Metadata> metaDataFile = new List<Metadata>();
+            List<Stats> statsFile = new List<Stats>();
 
-        //    Stats[] test = new Stats[] { };
+            #region Getting Csv Data
+            using (var reader = new StreamReader(Environment.CurrentDirectory + "/Docs/metadata.csv"))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                metaDataFile = csv.GetRecords<Metadata>().ToList();
+            }
 
-        //    var meta = new StreamReader(Environment.CurrentDirectory + "/Docs/metadata.csv");
-        //    using (var metacsv = new CsvHelper.CsvReader(meta, CultureInfo.InvariantCulture))
-        //    {
+            using (var reader2 = new StreamReader(Environment.CurrentDirectory + "/Docs/stats.csv"))
+            using (var csv2 = new CsvReader(reader2, CultureInfo.InvariantCulture))
+            {
+                statsFile = csv2.GetRecords<Stats>().ToList();
+            }
 
-        //        metadata = metacsv.GetRecords<CombinedData>()
-        //            .OrderBy(i => i.MovieId)
-        //            .Select(i => i).ToList();
-        //    }
-           
+            #endregion
 
-        //    var stats = new StreamReader(Environment.CurrentDirectory + "/Docs/stats.csv");
-        //    using (var statscsv = new CsvHelper.CsvReader(stats, CultureInfo.InvariantCulture))
-        //    {
-        //        statsdata = statscsv.GetRecords<CombinedData>().ToList();
+            var watchesById = statsFile.GroupBy(x => x.movieId).ToArray();
 
 
-        //        //var results = metadata.Concat(statsdata).GroupBy(g => g.MovieId).Select(s => s).ToArray();
-        //    }
+            var formatedStatsData =
+                (from t in statsFile
+                 group t by t.movieId into moviegroup
+                 select new CombinedData
+                 {
+                     movieId = moviegroup.Key,
+                     watches = (int)watchesById.Where(x => x.Key == moviegroup.Key).SelectMany(x => x).Count(),
+                     averageWatchDurationS = (int)moviegroup.Average(x => x.watchDurationMs)
+                 }).ToArray();
 
-        //    return test;
 
 
+            var Result = metaDataFile.Join(
+                formatedStatsData,
+                x => x.MovieId,
+                y => y.movieId,
+                (x, y) => new CombinedData()
+                {
+                    movieId = x.MovieId,
+                    averageWatchDurationS = y.averageWatchDurationS,
+                    watches = y.watches,
+                    ReleaseYear = x.ReleaseYear,
+                    title = x.Title
+                });
 
-        //}
+            Result.OrderBy(x => x.watches).ThenBy(x => x.ReleaseYear).Distinct().ToArray();
+
+            return Result.Distinct(new DistinctCombinedDataComparer()).ToArray();
+
+
+        }
+
+
     }
 
 
@@ -116,6 +139,27 @@ namespace MovieStudioAPI.Classes
                 obj.Language.GetHashCode() ^
                 obj.Duration.GetHashCode() ^
                 obj.ReleaseYear.GetHashCode();
+        }
+    }
+
+
+    class DistinctCombinedDataComparer : IEqualityComparer<CombinedData>
+    {
+        public bool Equals([AllowNull] CombinedData x, [AllowNull] CombinedData y)
+        {
+            return
+            x.movieId == y.movieId;
+        }
+
+        public int GetHashCode([DisallowNull] CombinedData obj)
+        {
+            return
+                //obj.movieId.GetHashCode();
+            obj.title.GetHashCode();
+                //obj.averageWatchDurationS.GetHashCode() ^
+                //obj.ReleaseYear.GetHashCode() ^
+                //obj.watches.GetHashCode();
+
         }
     }
 
