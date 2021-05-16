@@ -17,7 +17,7 @@ Time estimation: 5-10mins
 
      - GET /movies/stats 
 
-> This will combine 2 CSV together and return an array of items.
+> This will combine 2 CSV together and return an array of items
 > Time estimation: 1 hour 30min
 
 
