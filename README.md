@@ -15,13 +15,10 @@ Time estimation: 5-10mins
 > This will allow the user to search for a particular Movie by supplying the Movie ID, please note that it will only show 1 movie per county
 > Time estimation: 1 - 2 hours
 
-
      - GET /movies/stats 
 
-```diff
-- Currently this Get Request doesn't work and still needs to be worked on, however it should combine 2 CSV together and return an array of items.
-```
-> Time estimation: 15mins WIP
+> This will combine 2 CSV together and return an array of items.
+> Time estimation: 1 hour 30min
 
 
 ## How do I run this project?
