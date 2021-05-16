@@ -17,9 +17,9 @@ namespace MovieStudioAPI.Classes
         /// </summary>
         /// <param name="Data">The new movie info</param>
         /// <param name="path">Where the database file is stored</param>
-        public void AddMovie(MovieData Data, string path)
+        public void AddMovie(MovieData Data)
         {
-            using (StreamWriter sw = File.AppendText(path))
+            using (StreamWriter sw = File.AppendText(Environment.CurrentDirectory + "/Docs/Database.txt"))
             {
                 sw.WriteLine("{0},{1},{2},{3},{4}", Data.MovieId, Data.Title, Data.Language, Data.Duration, Data.ReleaseYear);
             }
