@@ -50,14 +50,16 @@ namespace MovieStudioAPI.Controllers
             try
             {
                 var movieQuery = new MovieQuery();
-                movieQuery.AddMovie(value, Environment.CurrentDirectory + "/Docs/Database.txt" );
+                movieQuery.AddMovie(value);
             }
             catch (Exception e)
             {
 
                 throw e;
             }
-            
+
+
+
 
         }
     }

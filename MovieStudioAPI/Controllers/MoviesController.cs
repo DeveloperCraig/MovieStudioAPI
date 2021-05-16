@@ -16,12 +16,19 @@ namespace MovieStudioAPI.Controllers
 
         // GET: MoviesController/stats
         [HttpGet("stats")]
-        public ActionResult <Stats[]> stats()
+        public ActionResult <CombinedData[]> stats()
         {
-            var movieQuery = new MovieQuery();
-            Stats[] statsSatas = movieQuery.MovieStats();
+            try
+            {
+                var testingClass = new MovieQuery();
+                return testingClass.MovieStats();
 
-            return statsSatas;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
         }
 
        

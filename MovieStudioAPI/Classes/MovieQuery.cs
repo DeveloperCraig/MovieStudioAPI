@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -16,9 +17,9 @@ namespace MovieStudioAPI.Classes
         /// </summary>
         /// <param name="Data">The new movie info</param>
         /// <param name="path">Where the database file is stored</param>
-        public void AddMovie(MovieData Data, string path)
+        public void AddMovie(MovieData Data)
         {
-            using (StreamWriter sw = File.AppendText(path))
+            using (StreamWriter sw = File.AppendText(Environment.CurrentDirectory + "/Docs/Database.txt"))
             {
                 sw.WriteLine("{0},{1},{2},{3},{4}", Data.MovieId, Data.Title, Data.Language, Data.Duration, Data.ReleaseYear);
             }
@@ -55,42 +56,66 @@ namespace MovieStudioAPI.Classes
         /// This is meant combine 2 CSV documents "metadata & stats" and return filtered information.
         /// </summary>
         /// <returns>An array of information</returns>
-        public Stats[] MovieStats()
+        public CombinedData[] MovieStats()
         {
-            //WARNING: This code currently doesn't work and still needs working on, What needs to happen is it combines the
-            // 2 document does some filtering and return ordered by most watched then release year
+            List<Metadata> metaDataFile = new List<Metadata>();
+            List<Stats> statsFile = new List<Stats>();
 
-            Metadata[] metadata;
-            Stats[] statsdata;
-
-
-            var meta = new StreamReader(Environment.CurrentDirectory + "/Docs/metadata.csv");
-            using (var metacsv = new CsvHelper.CsvReader(meta, CultureInfo.InvariantCulture))
+            #region Getting Csv Data
+            using (var reader = new StreamReader(Environment.CurrentDirectory + "/Docs/metadata.csv"))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                metadata = metacsv.GetRecords<Metadata>()
-                    .OrderBy(i => i.MovieId)
-                    .Select(i => i).ToArray();
-            }
-            
-
-            var stats = new StreamReader(Environment.CurrentDirectory + "/Docs/stats.csv");
-            using (var statscsv = new CsvHelper.CsvReader(stats, CultureInfo.InvariantCulture))
-            {
-                statsdata = statscsv.GetRecords<Stats>().ToArray();
-
-
-                //var results = metadata.Concat(statsdata).GroupBy(g => g.MovieId).Select(s => s).ToArray();
-
-
-                return statsdata;
+                metaDataFile = csv.GetRecords<Metadata>().ToList();
             }
 
+            using (var reader2 = new StreamReader(Environment.CurrentDirectory + "/Docs/stats.csv"))
+            using (var csv2 = new CsvReader(reader2, CultureInfo.InvariantCulture))
+            {
+                statsFile = csv2.GetRecords<Stats>().ToList();
+            }
+
+            #endregion
+
+            var watchesById = statsFile.GroupBy(x => x.movieId).ToArray();
 
 
+            var formatedStatsData =
+                (from t in statsFile
+                 group t by t.movieId into moviegroup
+                 select new CombinedData
+                 {
+                     movieId = moviegroup.Key,
+                     watches = (int)watchesById.Where(x => x.Key == moviegroup.Key).SelectMany(x => x).Count(),
+                     averageWatchDurationS = (int)moviegroup.Average(x => x.watchDurationMs)
+                 }).ToArray();
+
+
+
+            var Result = metaDataFile.Join(
+                formatedStatsData,
+                x => x.MovieId,
+                y => y.movieId,
+                (x, y) => new CombinedData()
+                {
+                    movieId = x.MovieId,
+                    averageWatchDurationS = y.averageWatchDurationS,
+                    watches = y.watches,
+                    ReleaseYear = x.ReleaseYear,
+                    title = x.Title
+                });
+
+            Result.OrderBy(x => x.watches).ThenBy(x => x.ReleaseYear).Distinct().ToArray();
+
+            return Result.Distinct(new DistinctCombinedDataComparer()).ToArray();
 
 
         }
+
+
     }
+
+
+
 
     /// <summary>
     /// In this class what I am doing is checking if the language is the same and if there is multiple of the same Lagrange 
@@ -114,6 +139,27 @@ namespace MovieStudioAPI.Classes
                 obj.Language.GetHashCode() ^
                 obj.Duration.GetHashCode() ^
                 obj.ReleaseYear.GetHashCode();
+        }
+    }
+
+
+    class DistinctCombinedDataComparer : IEqualityComparer<CombinedData>
+    {
+        public bool Equals([AllowNull] CombinedData x, [AllowNull] CombinedData y)
+        {
+            return
+            x.movieId == y.movieId;
+        }
+
+        public int GetHashCode([DisallowNull] CombinedData obj)
+        {
+            return
+                //obj.movieId.GetHashCode();
+            obj.title.GetHashCode();
+                //obj.averageWatchDurationS.GetHashCode() ^
+                //obj.ReleaseYear.GetHashCode() ^
+                //obj.watches.GetHashCode();
+
         }
     }
 
