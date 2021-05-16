@@ -1,6 +1,6 @@
 # Movie API
 ***This is a .Net Core 3.1 Web API project created by Craig Benion*** 
-I total this project took around 3 hours Todo and was done over 2 days when I had some spare time.
+I total this project took around 4 - 5 hours Todo and was done over 3 days when I had some spare time.
 
 ## What's inside this repository?
 Inside this repository you will find a .Net Core 3.1 Web API project with the following endpoint:
